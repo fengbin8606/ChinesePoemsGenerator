@@ -17,6 +17,7 @@ epochs = 50
 
 # 训练模型
 def load_poems(file_path):
+    # 用于存放处理后的所有诗歌
     poems = []
     with open(file_path, mode='r', encoding='utf-8') as f:
         for line in f.readlines():
@@ -33,7 +34,7 @@ def load_poems(file_path):
                 poems.append(content)
             except ValueError as e:
                 pass
-    poems = sorted(poems, key=lambda l : len(line))
+    poems = sorted(poems, key=lambda l:len(l))
     print('poems count is %s' % (len(poems)))
     return poems
 
@@ -45,20 +46,21 @@ def process_poems(poems):
 
     # 统计每个字的频数
     count = collections.Counter(all_words)
+    排序
     sort = sorted(count.items(), key=lambda x: -x[1])
     # 解压sort
     words, _ = zip(*sort)
     words = words[:len(words)] + (' ',)
     # 创建一个字典，key:文字,value:序号  将
     dict_words = dict(zip(words, range(len(words))))
-    # 以序号的形式表示诗
+    # 以序号的形式表示诗 将诗中的每一个文字换成序号
     vector = [list(map(lambda word: dict_words.get(word, len(words)), poem)) for poem in poems]
     return words, dict_words, vector
 
 
 def generate_batch(batch_size, vector, dict_words):
     # 一个epochs有多少个batch_size
-    num = len(vector) / batch_size
+    num = len(vector) // batch_size
     data_x = []
     data_y = []
     for i in range(num):
